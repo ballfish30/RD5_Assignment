@@ -37,6 +37,8 @@ class OnlineBankController extends Controller
             header("Location: http://localhost:8888/RD5_Assignment/onlineBank/login?Message=".$Message);
             die;
         }
+        session_start(300);
+        $_SESSION['userName'] = $userName;
         $Message = "親愛的用戶$userName" . "你好";
         header("Location: http://localhost:8888/RD5_Assignment/onlineBank/bank?Message=".$Message);
         die;
@@ -91,6 +93,49 @@ class OnlineBankController extends Controller
 
 
     function bank(){
+        if($_SERVER['REQUEST_METHOD']=='GET') {
+            if(isset($_GET['Message'])){
+                echo $_GET['Message'];
+            }
+            $this->view("Bank/bank");
+        }
+    }
+
+
+
+    function deposit(){
+        if($_SERVER['REQUEST_METHOD']=='GET') {
+            if(isset($_GET['Message'])){
+                echo $_GET['Message'];
+            }
+            $this->view("Bank/bank");
+        }
+    }
+
+
+    function withdraw(){
+        if($_SERVER['REQUEST_METHOD']=='GET') {
+            if(isset($_GET['Message'])){
+                echo $_GET['Message'];
+            }
+            $this->view("Bank/bank");
+        }
+    }
+
+
+
+    function tradeSearch(){
+        if($_SERVER['REQUEST_METHOD']=='GET') {
+            if(isset($_GET['Message'])){
+                echo $_GET['Message'];
+            }
+            $this->view("Bank/bank");
+        }
+    }
+
+
+
+    function amountSearch(){
         if($_SERVER['REQUEST_METHOD']=='GET') {
             if(isset($_GET['Message'])){
                 echo $_GET['Message'];
