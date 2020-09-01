@@ -127,9 +127,8 @@ class OnlineBankController extends Controller
                 update user set total = total + $_POST[amount] where userId = "$_SESSION[userId]";
         mutil;
         mysqli_query($link, $sql);
-        echo($_POST['comment']);
-        // $Message = "存款成功";
-        //     return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/bank?Message=".$Message);
+        $Message = "存款成功";
+            return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/bank?Message=".$Message);
     }
 
 
