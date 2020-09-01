@@ -5,7 +5,7 @@ class OnlineBankController extends Controller
 
     function index(){
         if($_SERVER['REQUEST_METHOD']=='GET') {
-            $this->view("User/login");
+            return $this->view("User/login");
         }
     }
 
@@ -16,8 +16,7 @@ class OnlineBankController extends Controller
             if(isset($_GET['Message'])){
                 echo $_GET['Message'];
             }
-            $this->view("User/login");
-            die;
+            return $this->view("User/login");
         }
         //POST
         $userName = $_POST['userName'];
@@ -30,18 +29,15 @@ class OnlineBankController extends Controller
         $search = mysqli_fetch_assoc($result);
         if ($search == Null){
             $Message = "查無此用戶";
-            header("Location: http://localhost:8888/RD5_Assignment/onlineBank/login?Message=".$Message);
-            die;
+            return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/login?Message=".$Message);
         }
         elseif(!password_verify($passwd, $search['passwd'])){
             $Message = "密碼錯誤";
-            header("Location: http://localhost:8888/RD5_Assignment/onlineBank/login?Message=".$Message);
-            die;
+            return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/login?Message=".$Message);
         }
         $_SESSION['userId'] = $search['userId'];
         $Message = "親愛的用戶$userName" . "你好";
-        header("Location: http://localhost:8888/RD5_Assignment/onlineBank/bank?Message=".$Message);
-        die;
+        return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/bank?Message=".$Message);
     }
 
 
@@ -58,8 +54,7 @@ class OnlineBankController extends Controller
             if(isset($_GET['Message'])){
                 echo $_GET['Message'];
             }
-            $this->view("User/register");
-            die;
+            return $this->view("User/register");
         }
         //POST
         $userName = $_POST['userName'];
@@ -76,12 +71,10 @@ class OnlineBankController extends Controller
             )
         mutil;
         if (mysqli_query($link, $sql)){
-            header("Location: http://localhost:8888/RD5_Assignment/onlineBank/");
-            die;
+            return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/");
         }else{
             $Message = "帳號或信箱重複";
-            header("Location: http://localhost:8888/RD5_Assignment/onlineBank/register?Message=".$Message);
-            die;
+            return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/register?Message=".$Message);
         }
     }
 
@@ -100,40 +93,78 @@ class OnlineBankController extends Controller
 
 
     function bank(){
-        session_start();
         if($_SERVER['REQUEST_METHOD']=='GET') {
             if(isset($_GET['Message'])){
                 echo $_GET['Message'];
             }
-            $this->view("Bank/bank");
+            return $this->view("Bank/bank");
         }
     }
 
 
 
     function deposit(){
+        session_start();
+        $today = date("Y/m/d");
         if($_SERVER['REQUEST_METHOD']=='GET') {
             if(isset($_GET['Message'])){
                 echo $_GET['Message'];
             }
-            $this->view("Bank/deposit");
+            return $this->view("Bank/deposit");
         }
+        $link = include 'config.php';
+        $sql = <<<mutil
+            insert into trade(
+                userId, status, amount, content, tradeDate
+            )
+            values(
+                "$_SESSION[userId]", "存款", "$_POST[amount]",
+                "$_POST[comment]", "$today"
+            )
+        mutil;
+        mysqli_query($link, $sql);
+        $sql = <<<mutil
+                update user set total = total + $_POST[amount] where userId = "$_SESSION[userId]";
+        mutil;
+        mysqli_query($link, $sql);
+        echo($_POST['comment']);
+        // $Message = "存款成功";
+        //     return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/bank?Message=".$Message);
     }
 
 
     function withdraw(){
+        session_start();
+        $today = date("Y/m/d");
         if($_SERVER['REQUEST_METHOD']=='GET') {
             if(isset($_GET['Message'])){
                 echo $_GET['Message'];
             }
-            $this->view("Bank/withdraw");
+            return $this->view("Bank/withdraw");
         }
+        $link = include 'config.php';
+        $sql = <<<mutil
+            insert into trade(
+                userId, status, amount, content, tradeDate
+            )
+            values(
+                "$_SESSION[userId]", "提款", "$_POST[amount]",
+                "$_POST[comment]", "$today"
+            )
+        mutil;
+        mysqli_query($link, $sql);
+        $sql = <<<mutil
+                update user set total = total - $_POST[amount] where userId = "$_SESSION[userId]";
+        mutil;
+        mysqli_query($link, $sql);
+        $Message = "提款成功";
+            return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/bank?Message=".$Message);
     }
 
 
 
     function tradeSearch(){
-        $this->view("Bank/tradeSearch");
+        return $this->view("Bank/tradeSearch");
     }
 
 
