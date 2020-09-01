@@ -11,6 +11,7 @@ class OnlineBankController extends Controller
 
 
     function login(){
+        session_start();
         if($_SERVER['REQUEST_METHOD']=='GET') {
             if(isset($_GET['Message'])){
                 echo $_GET['Message'];
@@ -37,11 +38,17 @@ class OnlineBankController extends Controller
             header("Location: http://localhost:8888/RD5_Assignment/onlineBank/login?Message=".$Message);
             die;
         }
-        session_start(300);
-        $_SESSION['userName'] = $userName;
+        $_SESSION['userId'] = $search['userId'];
         $Message = "親愛的用戶$userName" . "你好";
         header("Location: http://localhost:8888/RD5_Assignment/onlineBank/bank?Message=".$Message);
         die;
+    }
+
+
+
+    function logout(){
+        session_destroy();
+        $this->view("User/login");
     }
 
 
@@ -93,6 +100,7 @@ class OnlineBankController extends Controller
 
 
     function bank(){
+        session_start();
         if($_SERVER['REQUEST_METHOD']=='GET') {
             if(isset($_GET['Message'])){
                 echo $_GET['Message'];
@@ -108,7 +116,7 @@ class OnlineBankController extends Controller
             if(isset($_GET['Message'])){
                 echo $_GET['Message'];
             }
-            $this->view("Bank/bank");
+            $this->view("Bank/deposit");
         }
     }
 
@@ -118,29 +126,26 @@ class OnlineBankController extends Controller
             if(isset($_GET['Message'])){
                 echo $_GET['Message'];
             }
-            $this->view("Bank/bank");
+            $this->view("Bank/withdraw");
         }
     }
 
 
 
     function tradeSearch(){
-        if($_SERVER['REQUEST_METHOD']=='GET') {
-            if(isset($_GET['Message'])){
-                echo $_GET['Message'];
-            }
-            $this->view("Bank/bank");
-        }
+        $this->view("Bank/tradeSearch");
     }
 
 
 
     function amountSearch(){
-        if($_SERVER['REQUEST_METHOD']=='GET') {
-            if(isset($_GET['Message'])){
-                echo $_GET['Message'];
-            }
-            $this->view("Bank/bank");
-        }
+        session_start();
+        $link = include 'config.php';
+        $sql = <<<mutil
+            select * from user where userId = "$_SESSION[userId]";
+        mutil;
+        $result = mysqli_query($link, $sql);
+        $search = mysqli_fetch_assoc($result);
+        echo $search['total'];
     }
 }
