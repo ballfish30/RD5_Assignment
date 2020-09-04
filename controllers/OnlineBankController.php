@@ -71,10 +71,10 @@ class OnlineBankController extends Controller
             )
         mutil;
         if (mysqli_query($link, $sql)){
-            return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/");
+            header("Location: http://localhost:8888/RD5_Assignment/onlineBank/");
         }else{
             $Message = "帳號或信箱重複";
-            return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/register?Message=".$Message);
+            header("Location: http://localhost:8888/RD5_Assignment/onlineBank/register?Message=".$Message);
         }
     }
 
