@@ -147,6 +147,12 @@ class OnlineBankController extends Controller
         }
         $link = include 'config.php';
         $sql = <<<mutil
+            select * from user where userId = "$_SESSION[userId]"
+        mutil;
+        $result =  mysqli_query($link, $sql);
+        $user = mysqli_fetch_assoc($result);
+        if ($user['total']>$_POST['amount']){
+            $sql = <<<mutil
             insert into trade(
                 userId, status, amount, content, tradeDate
             )
@@ -154,14 +160,19 @@ class OnlineBankController extends Controller
                 "$_SESSION[userId]", "提款", "$_POST[amount]",
                 "$_POST[comment]", "$today"
             )
-        mutil;
-        mysqli_query($link, $sql);
-        $sql = <<<mutil
-                update user set total = total - $_POST[amount] where userId = "$_SESSION[userId]";
-        mutil;
-        mysqli_query($link, $sql);
-        $Message = "提款成功";
+            mutil;
+            mysqli_query($link, $sql);
+            $sql = <<<mutil
+                    update user set total = total - $_POST[amount] where userId = "$_SESSION[userId]";
+            mutil;
+            mysqli_query($link, $sql);
+            $Message = "提款成功";
             return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/bank?Message=".$Message);
+        }else{
+            $Message = "餘額不足";
+            return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/bank?Message=".$Message);
+        }
+
     }
 
 
