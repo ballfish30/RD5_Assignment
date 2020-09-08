@@ -43,6 +43,7 @@ class OnlineBankController extends Controller
 
 
     function logout(){
+        session_start();
         session_destroy();
         $this->view("User/login");
     }
@@ -93,6 +94,7 @@ class OnlineBankController extends Controller
 
 
     function bank(){
+        $this->userCheck();
         if($_SERVER['REQUEST_METHOD']=='GET') {
             if(isset($_GET['Message'])){
                 echo $_GET['Message'];
@@ -104,6 +106,7 @@ class OnlineBankController extends Controller
 
 
     function deposit(){
+        $this->userCheck();
         session_start();
         $today = date("Y/m/d");
         if($_SERVER['REQUEST_METHOD']=='GET') {
@@ -133,6 +136,7 @@ class OnlineBankController extends Controller
 
 
     function withdraw(){
+        $this->userCheck();
         session_start();
         $today = date("Y/m/d");
         if($_SERVER['REQUEST_METHOD']=='GET') {
@@ -163,6 +167,7 @@ class OnlineBankController extends Controller
 
 
     function tradeSearch(){
+        $this->userCheck();
         return $this->view("Bank/tradeSearch");
     }
 
@@ -177,5 +182,15 @@ class OnlineBankController extends Controller
         $result = mysqli_query($link, $sql);
         $search = mysqli_fetch_assoc($result);
         echo $search['total'];
+    }
+
+
+
+    function userCheck(){
+        session_start();
+        if(!isset($_SESSION['userId'])){
+            $Message = "請登入會員";
+            return header("Location: http://localhost:8888/RD5_Assignment/onlineBank/login?Message=".$Message);
+        }
     }
 }

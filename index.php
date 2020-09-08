@@ -6,4 +6,5 @@ require_once 'core/Controller.php';
 
 $app = new App();
 
+
 ?>
